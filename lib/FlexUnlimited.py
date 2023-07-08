@@ -163,7 +163,7 @@ class FlexUnlimited:
   def __registerAccount(self):
     link = "https://www.amazon.com/ap/signin?ie=UTF8&clientContext=134-9172090-0857541&openid.pape.max_auth_age=0&use_global_authentication=false&accountStatusPolicy=P1&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&use_audio_captcha=false&language=en_US&pageId=amzn_device_na&arb=97b4a0fe-13b8-45fd-b405-ae94b0fec45b&openid.return_to=https%3A%2F%2Fwww.amazon.com%2Fap%2Fmaplanding&openid.assoc_handle=amzn_device_na&openid.oa2.response_type=token&openid.mode=checkid_setup&openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&openid.ns.oa2=http%3A%2F%2Fwww.amazon.com%2Fap%2Fext%2Foauth%2F2&openid.oa2.scope=device_auth_access&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&disableLoginPrepopulate=0&openid.oa2.client_id=device%3A32663430323338643639356262653236326265346136356131376439616135392341314d50534c4643374c3541464b&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0"
     print("Link: " + link)
-    maplanding_url = input("Open the previous link (make sure to copy the entire link) in a browser, sign in, and enter the entire resulting URL here:\n")
+    maplanding_url = self.config['maplanding_url']
     parsed_query = parse_qs(urlparse(maplanding_url).query)
     reg_access_token = unquote(parsed_query['openid.oa2.access_token'][0])
     device_id = secrets.token_hex(16)
@@ -410,14 +410,15 @@ class FlexUnlimited:
     return response
 
   def __acceptOffer(self, offer: Offer):
+    Log.info("Accepting Offer...", self)
     self.__requestHeaders["X-Amz-Date"] = self.__getAmzDate()
-
     request = self.session.post(
       FlexUnlimited.routes.get("AcceptOffer"),
       headers=self.__requestHeaders,
       json={"offerId": offer.id})
 
     if request.status_code == 403:
+      Log.info("Failed to accept Offer...", self)
       self.__getFlexAccessToken()
       request = self.session.post(
         FlexUnlimited.routes.get("AcceptOffer"),
@@ -440,30 +441,35 @@ class FlexUnlimited:
 
   def __processOffer(self, offer: Offer):
     if offer.hidden:
+      Log.info("Skipped: Hidden...", self)
       return
       
     if self.desiredWeekdays:
       if offer.weekday not in self.desiredWeekdays:
+        Log.info("Skipped: Weekdays...", self)
         return
 
     if self.minBlockRate:
       if offer.blockRate < self.minBlockRate:
+        Log.info("Skipped: Min Block Rate...", self)
         return
 
     if self.minPayRatePerHour:
       if offer.ratePerHour < self.minPayRatePerHour:
+        Log.info("Skipped: Rate per hour...", self)
         return
 
     if self.arrivalBuffer:
       deltaTime = (offer.startTime - datetime.now()).seconds / 60
       if deltaTime < self.arrivalBuffer:
+        Log.info("Skipped: Arrival buffer...", self)
         return
 
     if not self.filterForWarehouse:
       if len(self.desiredWarehouses) > 0:
         if offer.location not in self.desiredWarehouses:
+          Log.info("Skipped: Desired warehouses...", self)
           return
-
     self.__acceptOffer(offer)
 
   def whilecond(self):

@@ -3,3 +3,4 @@ env/*
 localconfig.json
 *.swp
 Session.vim
+venv

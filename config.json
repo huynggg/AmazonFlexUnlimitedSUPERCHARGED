@@ -36,5 +36,6 @@
 	"rateLimit": {
 		"increment": 30,
 		"maxTimesIncrement": 4
-	}
+	},
+	"maplanding_url": ""
 }
