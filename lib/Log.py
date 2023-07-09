@@ -32,7 +32,7 @@ class Log:
             requests.post("https://ntfy.sh/" + flexClass.ntfyChannel, data = message.encode(encoding="utf-8"))
 
         if(flexClass.logging['error']):
-            print(f'['+str(datetime.now())+'] ERROR: {message}', flush=True)
+            print(f'['+str(datetime.now())+'] ERROR: '+message+'\n', flush=True)
 
     @staticmethod
     def ntfy(message: str, flexClass):

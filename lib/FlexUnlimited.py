@@ -441,34 +441,34 @@ class FlexUnlimited:
 
   def __processOffer(self, offer: Offer):
     if offer.hidden:
-      Log.info("Skipped: Hidden...", self)
+      Log.info("Skipped: Hidden...\n", self)
       return
       
     if self.desiredWeekdays:
       if offer.weekday not in self.desiredWeekdays:
-        Log.info("Skipped: Weekdays...", self)
+        Log.info("Skipped: Weekdays...\n", self)
         return
 
     if self.minBlockRate:
       if offer.blockRate < self.minBlockRate:
-        Log.info("Skipped: Min Block Rate...", self)
+        Log.info("Skipped: Min Block Rate...\n", self)
         return
 
     if self.minPayRatePerHour:
       if offer.ratePerHour < self.minPayRatePerHour:
-        Log.info("Skipped: Rate per hour...", self)
+        Log.info("Skipped: Rate per hour...\n", self)
         return
 
     if self.arrivalBuffer:
       deltaTime = (offer.startTime - datetime.now()).seconds / 60
       if deltaTime < self.arrivalBuffer:
-        Log.info("Skipped: Arrival buffer...", self)
+        Log.info("Skipped: Arrival buffer...\n", self)
         return
 
     if not self.filterForWarehouse:
       if len(self.desiredWarehouses) > 0:
         if offer.location not in self.desiredWarehouses:
-          Log.info("Skipped: Desired warehouses...", self)
+          Log.info("Skipped: Desired warehouses...\n", self)
           return
     self.__acceptOffer(offer)
 

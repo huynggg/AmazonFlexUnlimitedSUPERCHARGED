@@ -33,10 +33,10 @@ class Offer:
             body += 'Start time: ' + str(self.startTime.hour) + str(self.startTime.minute) + '\n'
 
         if not self.endTime.minute:
-            body += 'End time: ' + str(self.endTime.hour) + '00\n'
+            body += 'End time: ' + str(self.endTime.hour) + '00'
         elif self.endTime.minute < 10:
-            body += 'End time: ' + str(self.endTime.hour) + '0' + str(self.endTime.minute) + '\n'
+            body += 'End time: ' + str(self.endTime.hour) + '0' + str(self.endTime.minute)
         else:
-            body += 'End time: ' + str(self.endTime.hour) + str(self.endTime.minute) + '\n'
+            body += 'End time: ' + str(self.endTime.hour) + str(self.endTime.minute)
 
         return body
